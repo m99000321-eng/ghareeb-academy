@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cairo, Tajawal } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/site/Navbar";
-import { Footer } from "@/components/site/Footer";
+import { SiteChrome } from "@/components/site/SiteChrome";
 
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
@@ -71,9 +70,9 @@ export default function RootLayout({
         >
           تخطَّ إلى المحتوى
         </a>
-        <Navbar />
-        <main id="main">{children}</main>
-        <Footer />
+        <SiteChrome>
+          <main id="main">{children}</main>
+        </SiteChrome>
       </body>
     </html>
   );

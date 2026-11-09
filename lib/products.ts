@@ -46,9 +46,11 @@ export type Product = {
   colors: string[];
   modelColor: string;
   modelAccent: string;
+  image?: string;
   description: string;
   features: string[];
   featured?: boolean;
+  active?: boolean;
 };
 
 export const categories: Category[] = [
@@ -114,6 +116,7 @@ export const products: Product[] = [
     colors: ["#ff3d6e", "#111118", "#c8ff2e"],
     modelColor: "#ff3d6e",
     modelAccent: "#111118",
+    image: "/products/nova-boxing-gloves.webp",
     description:
       "قفاز نوفا هو قفازك الأول والأخير. جلد طبيعي كامل الحبيبات، حشوة ثلاثية الكثافة تمتص الصدمات، وبطانة داخلية مضادة للبكتيريا تحافظ على يديك جافة في أطول الجولات.",
     features: [
@@ -137,6 +140,7 @@ export const products: Product[] = [
     colors: ["#f5f5f7", "#ff3d6e", "#8b5cf6"],
     modelColor: "#f5f5f7",
     modelAccent: "#ff3d6e",
+    image: "/products/orbit-sparring-gloves.webp",
     description:
       "مصمم للسبارينغ الطويل. حشوة أسمك توزع الطاقة على مساحة أوسع، ما يقلل الإصابات ويطيل عمر القفاز مع شريكك في التدريب.",
     features: [
@@ -160,6 +164,7 @@ export const products: Product[] = [
     colors: ["#111118", "#ff3d6e", "#c8ff2e"],
     modelColor: "#c8ff2e",
     modelAccent: "#111118",
+    image: "/products/titan-hand-wraps.webp",
     description:
       "رابطة مرنة بنسبة 70% قطن و30% إيلاستين، تلتف حول اليد والمعصم دون تكتل. طرف لاصق قوي يبقى ثابتًا حتى آخر جولة.",
     features: ["طول 4.5 متر", "قطن مرن فائق", "طرف لاصق مقوى", "قابلة للغسل"],
@@ -177,6 +182,7 @@ export const products: Product[] = [
     colors: ["#111118", "#ff3d6e", "#22d3ee"],
     modelColor: "#111118",
     modelAccent: "#ff3d6e",
+    image: "/products/halo-boxing-headgear.webp",
     description:
       "مجال رؤية واسع وحماية جانبية كاملة. إسفنج إمباكشن متعدد الطبقات وفتحات تهوية استراتيجية تحافظ على برودة رأسك.",
     features: ["رؤية محيطية 180°", "إسفنج متعدد الطبقات", "أحزمة قابلة للتعديل", "وزن خفيف"],
@@ -196,6 +202,7 @@ export const products: Product[] = [
     colors: ["#111118", "#ff3d6e"],
     modelColor: "#111118",
     modelAccent: "#ff3d6e",
+    image: "/products/cosmos-heavy-bag.webp",
     description:
       "كيس بحشوة ألياف مضغوطة لا تتكتل مع الوقت. جلد صناعي مقوى يتحمل آلاف اللكمات، مع سلسلة تثبيت دوارة وسادة صوتية.",
     features: ["وزن 45 كجم", "جلد صناعي مقوى", "سلسلة دوارة", "وسادة امتصاص صوت"],
@@ -213,9 +220,85 @@ export const products: Product[] = [
     colors: ["#c8ff2e", "#ff3d6e", "#22d3ee"],
     modelColor: "#c8ff2e",
     modelAccent: "#7c3aed",
+    image: "/products/shield-mouthguard.webp",
     description:
       "حماية مزدوجة للفك والأسنان بتصميم قابل للقولبة بالحرارة. مجرى تنفس أمامي يسمح بالتنفس الطبيعي أثناء الضغط.",
     features: ["قولبة منزلية سهلة", "مجرى تنفس", "حماية مزدوجة", "علبة حفظ"],
+  },
+  {
+    slug: "apex-boxing-shoes",
+    sku: "GH-BX-007",
+    name: "حذاء ملاكمة أبيكس برو",
+    nameEn: "Apex Boxing Shoes",
+    category: "boxing",
+    price: 499,
+    oldPrice: 599,
+    rating: 4.8,
+    reviews: 112,
+    badge: "جديد",
+    stock: 34,
+    colors: ["#111118", "#ff3d6e", "#f5f5f7"],
+    modelColor: "#111118",
+    modelAccent: "#ff3d6e",
+    image: "/products/apex-boxing-shoes.webp",
+    description:
+      "حذاء ملاكمة عالي الرقبة يثبّت الكاحل في الدوران والاندفاع. نعل مطاطي بنمط محوري يسمح بالالتفاف السريع دون انزلاق، وشبك تهوية يبقي القدم جافة داخل الحلبة.",
+    features: ["دعم كاحل عالي", "نعل محوري للدوران", "شبك تهوية خفيف", "ثبات على الحلبة"],
+  },
+  {
+    slug: "phantom-speed-bag",
+    sku: "GH-BX-008",
+    name: "كيس سرعة فانتوم",
+    nameEn: "Phantom Speed Bag",
+    category: "boxing",
+    price: 349,
+    rating: 4.7,
+    reviews: 84,
+    stock: 41,
+    colors: ["#111118", "#ff3d6e"],
+    modelColor: "#111118",
+    modelAccent: "#ff3d6e",
+    image: "/products/phantom-speed-bag.webp",
+    description:
+      "كيس سرعة من الجلد الطبيعي بإيقاع رجعي سريع. مثانة هوائية قابلة للاستبدال ومعلق دوّار فولاذي يمنحك تحكمًا كاملًا في الإيقاع والتوقيت.",
+    features: ["جلد طبيعي متين", "مثانة قابلة للاستبدال", "معلق دوّار فولاذي", "وزن مثالي للسرعة"],
+  },
+  {
+    slug: "vector-double-end-bag",
+    sku: "GH-BX-009",
+    name: "كيس مزدوج الطرف فيكتور",
+    nameEn: "Vector Double-End Bag",
+    category: "boxing",
+    price: 429,
+    rating: 4.6,
+    reviews: 67,
+    stock: 29,
+    colors: ["#111118", "#ff3d6e", "#f5f5f7"],
+    modelColor: "#111118",
+    modelAccent: "#ff3d6e",
+    image: "/products/vector-double-end-bag.webp",
+    description:
+      "كيس مزدوج الطرف يتحرك في كل الاتجاهات ليطوّر ردّ فعلك ودقة توقيتك. حبال مطاطية قابلة للضبط وحلقات فولاذية تتحمل التدريب اليومي.",
+    features: ["حبال مطاطية مزدوجة", "جلد مقوّى", "حلقات فولاذية", "تدريب التوقيت والدفاع"],
+  },
+  {
+    slug: "aegis-groin-guard",
+    sku: "GH-BX-010",
+    name: "واقي فخذ أيجيس",
+    nameEn: "Aegis Groin Guard",
+    category: "boxing",
+    price: 189,
+    rating: 4.8,
+    reviews: 152,
+    badge: "أساسي",
+    stock: 85,
+    colors: ["#111118", "#ff3d6e"],
+    modelColor: "#111118",
+    modelAccent: "#ff3d6e",
+    image: "/products/aegis-groin-guard.webp",
+    description:
+      "حماية أساسية في السبارينغ والمباريات. قوقعة صلبة مبطنة توزع الصدمات، وأحزمة مرنة قابلة للتعديل تبقى ثابتة أثناء الحركة.",
+    features: ["قوقعة صلبة مبطنة", "أحزمة قابلة للتعديل", "بطانة مسامية", "مقاسات متعددة"],
   },
 
   {
@@ -233,6 +316,7 @@ export const products: Product[] = [
     colors: ["#ff7a18", "#111118", "#c8ff2e"],
     modelColor: "#ff7a18",
     modelAccent: "#111118",
+    image: "/products/solar-kickboxing-gloves.webp",
     description:
       "قفاز مصمم للحركة السريعة. وزن مثالي وتوازن أمامي يسمح باللكمات المتسلسلة دون إجهاد، مع بطانة تثبت اليد أثناء الدوران.",
     features: ["جلد صناعي فائق", "وزن 12 أونصة", "بطانة مانعة للانزلاق", "تهوية في الكف"],
@@ -251,6 +335,7 @@ export const products: Product[] = [
     colors: ["#111118", "#ff7a18"],
     modelColor: "#111118",
     modelAccent: "#ff7a18",
+    image: "/products/apollo-shin-guards.webp",
     description:
       "حماية من الركبة إلى مشط القدم بتصميم منحنٍ يتبع شكل الساق. أحزمة خلفية مزدوجة تمنع الانزياح في الركلات الدائرية.",
     features: ["حماية كاملة للقصبة", "بطانة إسفنجية ناعمة", "حزامان قابلان للتعديل", "خفيف الوزن"],
@@ -269,6 +354,7 @@ export const products: Product[] = [
     colors: ["#111118", "#ff7a18", "#22d3ee"],
     modelColor: "#111118",
     modelAccent: "#ff7a18",
+    image: "/products/orion-chest-guard.webp",
     description:
       "واقي صدر للسبارينغ والتايكوندو، خفيف لكنه يمتص الصدمات القوية. تصميم محدب يبقي الحركة حرة للكتفين.",
     features: ["إسفنج عالي الكثافة", "تصميم محدب مرن", "أحزمة كتف مريحة", "سطح قابل للمسح"],
@@ -287,26 +373,10 @@ export const products: Product[] = [
     colors: ["#c8ff2e", "#ff7a18", "#8b5cf6"],
     modelColor: "#c8ff2e",
     modelAccent: "#ff7a18",
+    image: "/products/neon-training-gloves.webp",
     description:
       "قفاز البدايات المثالي: خفيف، متين، وسعره في المتناول. مبطن بالكامل ويناسب التدريب اليومي وحصص اللياقة القتالية.",
     features: ["وزن 10 أونصة", "بطانة كاملة", "جلد صناعي متين", "لون عالي الوضوح"],
-  },
-  {
-    slug: "plasma-kickboxing-belt",
-    sku: "GH-KB-005",
-    name: "حزام كيك بوكس بلازما",
-    nameEn: "Plasma Belt",
-    category: "kickboxing",
-    price: 129,
-    rating: 4.5,
-    reviews: 71,
-    stock: 90,
-    colors: ["#8b5cf6", "#c8ff2e"],
-    modelColor: "#8b5cf6",
-    modelAccent: "#c8ff2e",
-    description:
-      "حزام عريض بتصميم رياضي يثبت الوسط ويدعم أسفل الظهر أثناء التدريب. قماش يمتص العرق ويجف سريعًا.",
-    features: ["دعم أسفل الظهر", "قماش سريع الجفاف", "مشبك معدني", "قابل للتعديل"],
   },
   {
     slug: "luna-knee-pads",
@@ -321,83 +391,88 @@ export const products: Product[] = [
     colors: ["#111118", "#ff7a18", "#22d3ee"],
     modelColor: "#111118",
     modelAccent: "#ff7a18",
+    image: "/products/luna-knee-pads.webp",
     description:
       "واقي ركبة منزلق يغطي الرضفة بحماية مرنة. مناسب للصراع والأرضيات الصلبة، بلا أحزمة تمزج حركتك.",
     features: ["حماية مرنة للرضفة", "بلا أحزمة", "نسيج مسامي", "مقاس موحد"],
   },
-
   {
-    slug: "dragon-kungfu-staff",
-    sku: "GH-KF-001",
-    name: "عصا كونغ فو دراغون — خشب",
-    nameEn: "Dragon Staff",
-    category: "kungfu",
-    price: 199,
-    rating: 4.8,
-    reviews: 164,
-    badge: "الأكثر مبيعاً",
-    stock: 55,
-    colors: ["#2ee6a8", "#c8a24a"],
-    modelColor: "#2ee6a8",
-    modelAccent: "#c8a24a",
+    slug: "inferno-thai-shorts",
+    sku: "GH-KB-007",
+    name: "شورت تايلاندي إنفيرنو",
+    nameEn: "Inferno Thai Shorts",
+    category: "kickboxing",
+    price: 259,
+    oldPrice: 319,
+    rating: 4.9,
+    reviews: 203,
+    badge: "جديد",
+    stock: 58,
+    colors: ["#111118", "#ff7a18", "#c8a24a"],
+    modelColor: "#111118",
+    modelAccent: "#ff7a18",
+    image: "/products/inferno-thai-shorts.webp",
     description:
-      "عصا ووشو من خشب البلوط الصلب، متوازنة في الوزن والحجم. مصقولة يدويًا لتمرير سلس بين الأصابع.",
-    features: ["خشب بلوط صلب", "طول 180 سم", "توازن احترافي", "طلاء واقٍ"],
+      "شورت مواي تاي بقطع واسع يمنحك حرية كاملة في الركلات العالية. ساتان خفيف بتفاصيل برتقالية وذهبية، وحزام مطاطي مع رباط داخلي يثبت أثناء الدوران.",
+    features: ["قطع واسع للركلات العالية", "ساتان خفيف سريع الجفاف", "حزام مطاطي ورباط", "خياطة معزّزة"],
+  },
+  {
+    slug: "raptor-kick-pads",
+    sku: "GH-KB-008",
+    name: "بادي ركل رابتور — زوج",
+    nameEn: "Raptor Kick Pads",
+    category: "kickboxing",
+    price: 389,
+    rating: 4.8,
+    reviews: 96,
+    stock: 32,
+    colors: ["#111118", "#ff7a18"],
+    modelColor: "#111118",
+    modelAccent: "#ff7a18",
+    image: "/products/raptor-kick-pads.webp",
+    description:
+      "زوج بادات ركل منحنية للتدريب على الركلات الدائرية والمباشرة. إسفنج عالي الكثافة يمتص الصدمة، وسطح جلدي مقوّى يتحمل آلاف الركلات اليومية.",
+    features: ["إسفنج عالي الكثافة", "سطح جلدي مقوّى", "حزام تثبيت خلفي", "مناسبة للمدرب والمقاتل"],
     featured: true,
   },
   {
-    slug: "jade-tai-chi-sword",
-    sku: "GH-KF-002",
-    name: "سيف تاي تشي جايد",
-    nameEn: "Jade Tai Chi Sword",
-    category: "kungfu",
-    price: 749,
-    oldPrice: 899,
-    rating: 4.9,
-    reviews: 49,
-    badge: "محدود",
-    stock: 9,
-    colors: ["#2ee6a8", "#e5e7eb"],
-    modelColor: "#2ee6a8",
-    modelAccent: "#e5e7eb",
-    description:
-      "سيف تاي تشي بنصل غير حاد مخصص للتمرين. مقبض حريري مغلف يدويًا وميزان دقيق يجعل الدوران يبدو بلا وزن.",
-    features: ["نصل تمرين غير حاد", "مقبض حريري", "غمد مطلي", "توازن خفيف"],
-  },
-  {
-    slug: "wushu-uniform",
-    sku: "GH-KF-003",
-    name: "زي كونغ فو ووشو",
-    nameEn: "Wushu Uniform",
-    category: "kungfu",
-    price: 559,
+    slug: "flex-ankle-supports",
+    sku: "GH-KB-009",
+    name: "دعامة كاحل فليكس — زوج",
+    nameEn: "Flex Ankle Supports",
+    category: "kickboxing",
+    price: 99,
     rating: 4.6,
-    reviews: 88,
-    stock: 31,
-    colors: ["#111118", "#2ee6a8", "#e5e7eb"],
+    reviews: 188,
+    stock: 140,
+    colors: ["#111118", "#ff7a18"],
     modelColor: "#111118",
-    modelAccent: "#2ee6a8",
+    modelAccent: "#ff7a18",
+    image: "/products/flex-ankle-supports.webp",
     description:
-      "زي ووشو من الحرير الصناعي الفاخر، يسمح بحرية كاملة في الحركات الواسعة. ياقة تقليدية وتفاصيل تطريز دقيقة.",
-    features: ["حرير صناعي فاخر", "ياقة تقليدية", "حرية حركة كاملة", "مناسب للعروض"],
+      "دعامة كاحل مرنة تمنح ثباتًا إضافيًا في الركل والحركة الجانبية. نسيج ضاغط يتنفس وفتحة كعب معزّزة تمنع الاحتكاك داخل الحذاء.",
+    features: ["ضغط داعم للكاحل", "نسيج يتنفس", "فتحة كعب معزّزة", "مقاسات مرنة"],
   },
   {
-    slug: "crane-combat-fan",
-    sku: "GH-KF-004",
-    name: "مروحة قتالية كرين",
-    nameEn: "Crane Combat Fan",
-    category: "kungfu",
-    price: 189,
+    slug: "cyclone-jump-rope",
+    sku: "GH-KB-010",
+    name: "حبل تدريب سايكلون",
+    nameEn: "Cyclone Jump Rope",
+    category: "kickboxing",
+    price: 119,
     rating: 4.7,
-    reviews: 112,
-    stock: 63,
-    colors: ["#e5e7eb", "#2ee6a8"],
-    modelColor: "#e5e7eb",
-    modelAccent: "#2ee6a8",
+    reviews: 241,
+    badge: "جديد",
+    stock: 110,
+    colors: ["#111118", "#ff7a18"],
+    modelColor: "#111118",
+    modelAccent: "#ff7a18",
+    image: "/products/cyclone-jump-rope.webp",
     description:
-      "مروحة قتالية فولاذية قابلة للطي، بتصميم كلاسيكي وخطاف إبهام آمن. خفيفة وسريعة في الفتح.",
-    features: ["أضلاع فولاذية", "قماش مقوى", "فتح سريع", "حقيبة حمل"],
+      "حبل سرعة بكابل فولاذي رفيع ومقبضين ألومنيوم مخرّشين لتحكم كامل. يبني إيقاع القدمين ويحسّن اللياقة القلبية في جولات قصيرة.",
+    features: ["كابل فولاذي سريع", "مقابض ألومنيوم", "محامل دوّارة", "قابل للضبط بالطول"],
   },
+
   {
     slug: "seven-wushu-gloves",
     sku: "GH-KF-005",
@@ -411,26 +486,29 @@ export const products: Product[] = [
     colors: ["#2ee6a8", "#111118", "#c8ff2e"],
     modelColor: "#2ee6a8",
     modelAccent: "#111118",
+    image: "/products/seven-wushu-gloves.webp",
     description:
       "قفاز ساندا مفتوح الأصابع للقبض والرمي. حماية للظهر مع مرونة كاملة للكف — للساندا والدفاع عن النفس.",
     features: ["أصابع مفتوحة", "قبضة مرنة", "حماية ظهر اليد", "تثبيت معصم"],
   },
   {
-    slug: "lotus-kungfu-shoes",
-    sku: "GH-KF-006",
-    name: "حذاء كونغ فو لوتس",
-    nameEn: "Lotus Kung Fu Shoes",
+    slug: "serpent-nunchaku",
+    sku: "GH-KF-007",
+    name: "ننشاكو سيربنت — فولاذ",
+    nameEn: "Serpent Nunchaku",
     category: "kungfu",
-    price: 329,
-    rating: 4.4,
-    reviews: 76,
-    stock: 44,
+    price: 279,
+    rating: 4.8,
+    reviews: 121,
+    badge: "محدود",
+    stock: 37,
     colors: ["#111118", "#2ee6a8"],
     modelColor: "#111118",
     modelAccent: "#2ee6a8",
+    image: "/products/serpent-nunchaku.webp",
     description:
-      "حذاء خفيف بنعل مسطح رقيق يمنحك إحساسًا مباشرًا بالأرض. مثالي للأشكال والوقفات الثابتة في الووشو.",
-    features: ["نعل رقيق مرن", "جزء علوي قماشي", "خفيف جدًا", "قبضة أرضية عالية"],
+      "ننشاكو فولاذي متوازن بثمانية أضلاع لتحكم أفضل في الدوران. سلسلة مصقولة ولفّات يد جادي ماصة للعرق، مناسبة للتدريب والعروض.",
+    features: ["فولاذ متوازن", "سلسلة مصقولة", "لفّات جادي ماصة", "حقيبة حمل"],
   },
 
   {
@@ -448,6 +526,7 @@ export const products: Product[] = [
     colors: ["#8b5cf6", "#111118", "#22d3ee"],
     modelColor: "#8b5cf6",
     modelAccent: "#111118",
+    image: "/products/venom-mma-gloves.webp",
     description:
       "قفاز إم إم إيه مفتوح الأصابع يمنحك قبضة كاملة للرمي والخنق. حماية ظهرية مبطنة دون أي عائق أمام الأصابع.",
     features: ["أصابع مفتوحة حرة", "حماية ظهرية مبطنة", "تثبيت معصم قوي", "جلد صناعي متين"],
@@ -466,6 +545,7 @@ export const products: Product[] = [
     colors: ["#111118", "#8b5cf6", "#c8ff2e"],
     modelColor: "#111118",
     modelAccent: "#8b5cf6",
+    image: "/products/abyss-fight-shorts.webp",
     description:
       "شورت قتال خفيف للغاية لا يقيّد الحركة. قماش مرن يمتص العرق وشق جانبي يسمح بحرية كاملة في الركلات العالية.",
     features: ["قشاش مرن سريع الجفاف", "شق جانبي", "حزام مطاطي", "جيب خفي"],
@@ -484,6 +564,7 @@ export const products: Product[] = [
     colors: ["#22d3ee", "#8b5cf6", "#111118"],
     modelColor: "#22d3ee",
     modelAccent: "#8b5cf6",
+    image: "/products/aqua-mma-training-gloves.webp",
     description:
       "قفاز تدريب خفيف للكيس والسبارينغ الخفيف. رغوة أحادية الكثافة سريعة الجفاف لتستمر حتى آخر حصة.",
     features: ["رغوة أحادية الكثافة", "تهوية فائقة", "وزن 6 أونصة", "أصابع مفتوحة"],
@@ -501,6 +582,7 @@ export const products: Product[] = [
     colors: ["#111118", "#8b5cf6", "#22d3ee"],
     modelColor: "#111118",
     modelAccent: "#8b5cf6",
+    image: "/products/spartan-shin-guards.webp",
     description:
       "واقي قصبة خفيف يثبت بالكامل حول الساق. مخصص للحركة الأرضية والركلات المنخفضة في القتال المختلط.",
     features: ["حماية خفيفة مرنة", "أشرطة مطاطية", "لا يقيّد الركبة", "بطانة ناعمة"],
@@ -518,6 +600,7 @@ export const products: Product[] = [
     colors: ["#111118", "#8b5cf6", "#c8ff2e"],
     modelColor: "#111118",
     modelAccent: "#8b5cf6",
+    image: "/products/guardian-mma-headgear.webp",
     description:
       "حماية شاملة للرأس مع رؤية غير معوقة. مصممة للسبارينغ القتالي بأربطة قابلة للضبط من خمس نقاط.",
     features: ["حماية شاملة", "رؤية واسعة", "أربطة خمس نقاط", "وزن محسّن"],
@@ -535,9 +618,86 @@ export const products: Product[] = [
     colors: ["#8b5cf6", "#c8ff2e", "#22d3ee"],
     modelColor: "#8b5cf6",
     modelAccent: "#c8ff2e",
+    image: "/products/pulse-punch-mitts.webp",
     description:
       "لوحة تدريب للكف مصممة لمدربيك. إسفنج مقوس يمتص اللكمات ويقلل الضغط على المعصم، بجيب إبهام مريح.",
     features: ["إسفنج مقوس", "جيب إبهام", "تهوية جيدة", "مناسبة للجميع"],
+  },
+  {
+    slug: "apex-rashguard",
+    sku: "GH-MM-007",
+    name: "راش جارد أبيكس طويل الأكمام",
+    nameEn: "Apex Rash Guard",
+    category: "mma",
+    price: 229,
+    rating: 4.8,
+    reviews: 167,
+    stock: 74,
+    colors: ["#111118", "#8b5cf6", "#22d3ee"],
+    modelColor: "#111118",
+    modelAccent: "#8b5cf6",
+    image: "/products/apex-rashguard.webp",
+    description:
+      "راش جارد ضاغط يحمي الجلد من الاحتكاك على الحصيرة ويثبت أثناء الأرضي. أكمام طويلة بدرزات مسطحة وخامة سريعة الجفاف تبقى خفيفة حتى آخر جولة.",
+    features: ["خامة ضاغطة سريعة الجفاف", "درزات مسطحة مريحة", "حماية من الاحتكاك", "أكمام طويلة"],
+    featured: true,
+  },
+  {
+    slug: "stealth-spats",
+    sku: "GH-MM-008",
+    name: "بنطلون ضاغط ستيلث",
+    nameEn: "Stealth Compression Spats",
+    category: "mma",
+    price: 219,
+    rating: 4.7,
+    reviews: 142,
+    badge: "جديد",
+    stock: 68,
+    colors: ["#111118", "#8b5cf6"],
+    modelColor: "#111118",
+    modelAccent: "#8b5cf6",
+    image: "/products/stealth-spats.webp",
+    description:
+      "بنطلون ضاغط للقتال الأرضي بقصّة مرنة تتبع حركة الورك والركبة. حزام عريض يثبت المكان وخامة مقاومة للشد تتحمل الخنق والاحتكاك.",
+    features: ["مرونة رباعية الاتجاه", "حزام عريض مثبت", "مقاومة للشد والاحتكاك", "خامة خفيفة"],
+  },
+  {
+    slug: "titan-groin-cup",
+    sku: "GH-MM-009",
+    name: "واقي فخذ تيتان",
+    nameEn: "Titan Groin Cup",
+    category: "mma",
+    price: 169,
+    rating: 4.6,
+    reviews: 118,
+    stock: 96,
+    colors: ["#111118", "#8b5cf6"],
+    modelColor: "#111118",
+    modelAccent: "#8b5cf6",
+    image: "/products/titan-groin-cup.webp",
+    description:
+      "واقي فخذ بقوقعة صلبة وحزام مرن يناسب الحركة الأرضية. تصميم منخفض السماكة لا يعيق الركل أو الدفاع، وبطانة مسامية تسحب العرق.",
+    features: ["قوقعة صلبة خفيفة", "حزام مرن آمن", "بطانة مسامية", "لا يعيق الحركة"],
+  },
+  {
+    slug: "shadow-grappling-dummy",
+    sku: "GH-MM-010",
+    name: "دمية مصارعة شادو",
+    nameEn: "Shadow Grappling Dummy",
+    category: "mma",
+    price: 1499,
+    oldPrice: 1799,
+    rating: 4.9,
+    reviews: 42,
+    badge: "احترافي",
+    stock: 8,
+    colors: ["#111118", "#8b5cf6"],
+    modelColor: "#111118",
+    modelAccent: "#8b5cf6",
+    image: "/products/shadow-grappling-dummy.webp",
+    description:
+      "دمية مصارعة بحشوة كثيفة تتجاوب مع الرمي والتثبيت والخنق. جلد فينيل مقوّى بدرزات معزّزة يتحمل التدريب الأرضي المتكرر، ومقبض للرفع والانقضاض.",
+    features: ["حشوة كثيفة متوازنة", "فينيل مقوّى بدرزات", "وزن واقعي للرمي", "مقابض تدريب"],
   },
 ];
 
@@ -556,14 +716,8 @@ export const productModels: Record<string, GearKind> = {
   "apollo-shin-guards": "shin",
   "orion-chest-guard": "chest",
   "neon-training-gloves": "glove",
-  "plasma-kickboxing-belt": "belt",
   "luna-knee-pads": "knee",
-  "dragon-kungfu-staff": "staff",
-  "jade-tai-chi-sword": "sword",
-  "wushu-uniform": "uniform",
-  "crane-combat-fan": "fan",
   "seven-wushu-gloves": "mma-glove",
-  "lotus-kungfu-shoes": "shoe",
   "venom-mma-gloves": "mma-glove",
   "abyss-fight-shorts": "shorts",
   "aqua-mma-training-gloves": "mma-glove",
@@ -610,7 +764,20 @@ export function queryProducts(options: {
   featuredOnly?: boolean;
   limit?: number;
 }): Product[] {
-  let result = [...products];
+  return queryFrom(products, options);
+}
+
+export function queryFrom(
+  source: Product[],
+  options: {
+    category?: string | null;
+    q?: string | null;
+    sort?: string | null;
+    featuredOnly?: boolean;
+    limit?: number;
+  },
+): Product[] {
+  let result = [...source];
 
   if (options.category && categories.some((item) => item.id === options.category)) {
     result = result.filter((product) => product.category === options.category);

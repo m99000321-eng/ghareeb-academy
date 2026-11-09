@@ -1,60 +1,106 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft,
   Check,
-  CreditCard,
+  FlaskConical,
   Loader2,
   Lock,
+  ShieldCheck,
   ShoppingBag,
-  Truck,
 } from "lucide-react";
-import {
-  FREE_SHIPPING_THRESHOLD,
-  SHIPPING_FEE,
-  formatPrice,
-  productMap,
-} from "@/lib/products";
+import { formatPrice } from "@/lib/products";
+import { useCatalog, useStoreSettings } from "@/lib/useCatalog";
 import { useCart } from "@/lib/store";
+import { PaymentIcon } from "@/components/admin/PaymentIcon";
 import { cn } from "@/lib/utils";
+import type { PaymentMethodId } from "@/lib/commerce-types";
 
-type OrderResponse = {
-  id: string;
-  subtotal: number;
-  shipping: number;
-  total: number;
-  payment: "cod" | "card";
-  customer: { name: string; city: string };
+type MethodOption = {
+  id: PaymentMethodId;
+  name: string;
+  description: string;
+  kind: "cod" | "manual" | "online";
+  badge?: string;
+  fee: number;
 };
 
 const inputClass =
   "h-12 w-full rounded-2xl border border-white/12 bg-ink/50 px-4 text-sm text-white outline-none transition-colors placeholder:text-white/25 focus:border-acid/60";
 
 export default function CheckoutPage() {
+  const router = useRouter();
   const items = useCart((state) => state.items);
   const clear = useCart((state) => state.clear);
+  const catalog = useCatalog();
+  const storedSettings = useStoreSettings();
   const [mounted, setMounted] = useState(false);
-  const [payment, setPayment] = useState<"cod" | "card">("cod");
+  const [methods, setMethods] = useState<MethodOption[]>([]);
+  const [methodsLoading, setMethodsLoading] = useState(true);
+  const [payment, setPayment] = useState<PaymentMethodId>("cod");
+  const [settings, setSettings] = useState(storedSettings);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [error, setError] = useState("");
-  const [order, setOrder] = useState<OrderResponse | null>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    setSettings(storedSettings);
+  }, [storedSettings]);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/payments/methods")
+      .then((response) => response.json())
+      .then(
+        (data: {
+          methods?: MethodOption[];
+          settings?: typeof storedSettings;
+        }) => {
+          if (!active) return;
+          if (Array.isArray(data.methods) && data.methods.length > 0) {
+            setMethods(data.methods);
+            setPayment((current) =>
+              data.methods!.some((method) => method.id === current)
+                ? current
+                : data.methods![0].id,
+            );
+          }
+          if (data.settings) setSettings(data.settings);
+        },
+      )
+      .catch(() => undefined)
+      .finally(() => {
+        if (active) setMethodsLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const selected = useMemo(
+    () => methods.find((method) => method.id === payment),
+    [methods, payment],
+  );
+
   const lines = items
-    .map((line) => ({ line, product: productMap[line.slug] }))
+    .map((line) => ({ line, product: catalog[line.slug] }))
     .filter((entry) => Boolean(entry.product));
   const subtotal = lines.reduce(
     (sum, entry) => sum + entry.product.price * entry.line.qty,
     0,
   );
   const shipping =
-    subtotal === 0 || subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
-  const total = subtotal + shipping;
+    subtotal === 0 || subtotal >= settings.freeShippingThreshold
+      ? 0
+      : settings.shippingFee;
+  const codFee = payment === "cod" ? settings.codFee : 0;
+  const total = subtotal + shipping + codFee;
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -70,6 +116,7 @@ export default function CheckoutPage() {
         city: String(form.get("city") ?? ""),
         address: String(form.get("address") ?? ""),
         notes: String(form.get("notes") ?? ""),
+        email: String(form.get("email") ?? ""),
       },
       payment,
       items: items.map((item) => ({ slug: item.slug, qty: item.qty })),
@@ -84,14 +131,13 @@ export default function CheckoutPage() {
       const data = (await response.json()) as {
         ok?: boolean;
         error?: string;
-        order?: OrderResponse;
+        redirectUrl?: string;
       };
-      if (!response.ok || !data.ok || !data.order) {
+      if (!response.ok || !data.ok || !data.redirectUrl) {
         throw new Error(data.error ?? "تعذّر إتمام الطلب، حاول مرة أخرى");
       }
-      setOrder(data.order);
       clear();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      router.push(data.redirectUrl);
     } catch (submitError) {
       setStatus("error");
       setError(
@@ -100,72 +146,6 @@ export default function CheckoutPage() {
           : "تعذّر إتمام الطلب، حاول مرة أخرى",
       );
     }
-  }
-
-  if (order) {
-    return (
-      <div className="relative overflow-hidden pb-20 pt-36">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/2 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-acid/10 blur-[120px]" />
-        </div>
-        <div className="container-x relative max-w-2xl text-center">
-          <span className="relative mx-auto grid h-20 w-20 place-items-center rounded-full border border-acid/30 bg-acid/10">
-            <span className="absolute inset-0 animate-ping rounded-full border border-acid/20" />
-            <Check size={32} className="text-acid" />
-          </span>
-          <h1 className="mt-7 font-display text-3xl font-black sm:text-4xl">
-            وصل طلبك إلى <span className="text-gradient-acid">البُعد الآخر</span>
-          </h1>
-          <p className="mt-4 text-sm leading-7 text-white/50">
-            شكرًا {order.customer.name}. استلمنا طلبك وسيتواصل فريق الغريب معك
-            لتأكيد التفاصيل قبل الشحن.
-          </p>
-
-          <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.03] p-6 text-right">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <span className="text-[11px] tracking-[0.2em] text-white/35">
-                ORDER ID
-              </span>
-              <span className="font-mono text-sm font-bold text-acid">{order.id}</span>
-            </div>
-            <div className="mt-5 grid gap-4 border-t border-white/10 pt-5 sm:grid-cols-3">
-              <div>
-                <p className="text-[10px] text-white/35">المدينة</p>
-                <p className="mt-1 text-sm font-bold">{order.customer.city}</p>
-              </div>
-              <div>
-                <p className="text-[10px] text-white/35">طريقة الدفع</p>
-                <p className="mt-1 text-sm font-bold">
-                  {order.payment === "cod" ? "عند الاستلام" : "بطاقة"}
-                </p>
-              </div>
-              <div>
-                <p className="text-[10px] text-white/35">الإجمالي</p>
-                <p className="mt-1 text-sm font-bold text-acid">
-                  {formatPrice(order.total)} ر.س
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link
-              href="/shop"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-acid px-7 py-3.5 text-sm font-extrabold text-ink transition-transform hover:-translate-y-0.5"
-            >
-              تسوّق المزيد
-              <ArrowLeft size={16} />
-            </Link>
-            <Link
-              href="/"
-              className="inline-flex items-center justify-center rounded-full border border-white/15 px-7 py-3.5 text-sm font-bold text-white/75 transition-colors hover:border-white/35 hover:text-white"
-            >
-              العودة للرئيسية
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
   }
 
   if (!mounted) {
@@ -225,7 +205,7 @@ export default function CheckoutPage() {
           إتمام <span className="text-gradient-acid">الطلب</span>
         </h1>
         <p className="mt-3 text-sm text-white/45">
-          خطوة واحدة تفصلك عن عتادك. أدخل بياناتك وسنتولى الباقي.
+          اختر طريقة الدفع المناسبة لك — كل الطرق متاحة وآمنة.
         </p>
 
         <form
@@ -271,6 +251,19 @@ export default function CheckoutPage() {
               </label>
               <label className="block">
                 <span className="text-[11px] font-bold text-white/45">
+                  البريد الإلكتروني (اختياري)
+                </span>
+                <input
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="name@email.com"
+                  className={`mt-2 ${inputClass}`}
+                  dir="ltr"
+                />
+              </label>
+              <label className="block sm:col-span-2">
+                <span className="text-[11px] font-bold text-white/45">
                   العنوان التفصيلي *
                 </span>
                 <input
@@ -296,62 +289,94 @@ export default function CheckoutPage() {
               />
             </label>
 
-            <h2 className="mt-8 font-display text-xl font-extrabold">طريقة الدفع</h2>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <button
-                type="button"
-                onClick={() => setPayment("cod")}
-                className={cn(
-                  "flex items-start gap-3 rounded-2xl border p-4 text-right transition-colors",
-                  payment === "cod"
-                    ? "border-acid/60 bg-acid/[0.06]"
-                    : "border-white/12 hover:border-white/30",
-                )}
-              >
-                <Truck size={18} className="mt-0.5 shrink-0 text-acid" />
-                <span>
-                  <span className="block text-sm font-bold">الدفع عند الاستلام</span>
-                  <span className="mt-1 block text-[11px] text-white/40">
-                    ادفع نقدًا أو بالشبكة عند وصول طلبك
-                  </span>
-                </span>
-                <span
-                  className={cn(
-                    "ms-auto mt-0.5 grid h-4 w-4 shrink-0 place-items-center rounded-full border",
-                    payment === "cod" ? "border-acid bg-acid" : "border-white/30",
-                  )}
-                >
-                  {payment === "cod" ? <Check size={10} className="text-ink" /> : null}
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setPayment("card")}
-                className={cn(
-                  "flex items-start gap-3 rounded-2xl border p-4 text-right transition-colors",
-                  payment === "card"
-                    ? "border-acid/60 bg-acid/[0.06]"
-                    : "border-white/12 hover:border-white/30",
-                )}
-              >
-                <CreditCard size={18} className="mt-0.5 shrink-0 text-acid" />
-                <span>
-                  <span className="block text-sm font-bold">بطاقة بنكية</span>
-                  <span className="mt-1 block text-[11px] text-white/40">
-                    يُرسل رابط دفع آمن بعد تأكيد الطلب
-                  </span>
-                </span>
-                <span
-                  className={cn(
-                    "ms-auto mt-0.5 grid h-4 w-4 shrink-0 place-items-center rounded-full border",
-                    payment === "card" ? "border-acid bg-acid" : "border-white/30",
-                  )}
-                >
-                  {payment === "card" ? <Check size={10} className="text-ink" /> : null}
-                </span>
-              </button>
+            <div className="mt-8 flex items-center justify-between">
+              <h2 className="font-display text-xl font-extrabold">طريقة الدفع</h2>
+              <span className="flex items-center gap-1.5 text-[10px] font-bold text-acid">
+                <ShieldCheck size={13} />
+                {methods.length || "…"} طريقة متاحة
+              </span>
             </div>
+
+            {methodsLoading ? (
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                {[0, 1, 2, 3].map((item) => (
+                  <div
+                    key={item}
+                    className="h-[76px] animate-pulse rounded-2xl border border-white/8 bg-white/[0.02]"
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                {methods.map((method) => {
+                  const active = payment === method.id;
+                  return (
+                    <button
+                      key={method.id}
+                      type="button"
+                      onClick={() => setPayment(method.id)}
+                      className={cn(
+                        "flex items-start gap-3 rounded-2xl border p-4 text-right transition-colors",
+                        active
+                          ? "border-acid/60 bg-acid/[0.06]"
+                          : "border-white/12 hover:border-white/30",
+                      )}
+                    >
+                      <PaymentIcon
+                        id={method.id}
+                        size={18}
+                        className={cn(
+                          "mt-0.5 shrink-0",
+                          active ? "text-acid" : "text-white/35",
+                        )}
+                      />
+                      <span className="min-w-0 flex-1">
+                        <span className="flex flex-wrap items-center gap-1.5">
+                          <span className="text-sm font-bold">{method.name}</span>
+                          {method.badge ? (
+                            <span className="rounded-full bg-gold/15 px-1.5 py-0.5 text-[8px] font-bold text-gold">
+                              {method.badge}
+                            </span>
+                          ) : null}
+                          {method.fee > 0 ? (
+                            <span className="text-[9px] text-white/35">
+                              +{method.fee} ر.س
+                            </span>
+                          ) : null}
+                        </span>
+                        <span className="mt-1 block text-[10px] leading-4 text-white/40">
+                          {method.description}
+                        </span>
+                      </span>
+                      <span
+                        className={cn(
+                          "mt-0.5 grid h-4 w-4 shrink-0 place-items-center rounded-full border",
+                          active ? "border-acid bg-acid" : "border-white/30",
+                        )}
+                      >
+                        {active ? <Check size={10} className="text-ink" /> : null}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {selected?.kind === "online" ? (
+              <p className="mt-4 flex items-start gap-2 rounded-xl border border-violet/20 bg-violet/[0.05] px-4 py-3 text-[10px] leading-5 text-violet-200/80">
+                <FlaskConical size={13} className="mt-0.5 shrink-0" />
+                الدفع الإلكتروني يعمل حاليًا في وضع المحاكاة الآمنة (بدون خصم
+                فعلي). بعد إضافة مفاتيح بوابة الدفع سيتم التحصيل الحقيقي تلقائيًا.
+              </p>
+            ) : null}
+
+            {selected?.kind === "manual" ? (
+              <p className="mt-4 flex items-start gap-2 rounded-xl border border-gold/20 bg-gold/[0.05] px-4 py-3 text-[10px] leading-5 text-gold/80">
+                <Lock size={13} className="mt-0.5 shrink-0" />
+                بعد تأكيد الطلب ستظهر بيانات الحساب، أرسل رقم عملية التحويل
+                وسيتم تأكيد طلبك بعد المراجعة.
+              </p>
+            ) : null}
 
             <p className="mt-6 flex items-center gap-2 text-[11px] text-white/30">
               <Lock size={12} />
@@ -362,7 +387,7 @@ export default function CheckoutPage() {
           <aside className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 lg:sticky lg:top-24">
             <h2 className="font-display text-xl font-extrabold">ملخّص الطلب</h2>
 
-            <div className="mt-5 space-y-3">
+            <div className="mt-5 max-h-64 space-y-3 overflow-y-auto pe-1">
               {lines.map(({ line, product }) => (
                 <div key={line.slug} className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -391,6 +416,12 @@ export default function CheckoutPage() {
                   {shipping === 0 ? "مجاني" : `${formatPrice(shipping)} ر.س`}
                 </span>
               </div>
+              {codFee > 0 ? (
+                <div className="flex items-center justify-between text-white/50">
+                  <span>رسوم الاستلام</span>
+                  <span className="font-bold text-white">{formatPrice(codFee)} ر.س</span>
+                </div>
+              ) : null}
             </div>
 
             <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-4">
@@ -409,7 +440,7 @@ export default function CheckoutPage() {
 
             <button
               type="submit"
-              disabled={status === "loading"}
+              disabled={status === "loading" || methodsLoading}
               className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-acid px-6 py-4 text-sm font-extrabold text-ink transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {status === "loading" ? (
@@ -419,7 +450,9 @@ export default function CheckoutPage() {
                 </>
               ) : (
                 <>
-                  تأكيد الطلب — {formatPrice(total)} ر.س
+                  {selected?.kind === "cod"
+                    ? `تأكيد الطلب — ${formatPrice(total)} ر.س`
+                    : `الانتقال للدفع — ${formatPrice(total)} ر.س`}
                   <ArrowLeft size={16} />
                 </>
               )}

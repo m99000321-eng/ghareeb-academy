@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { categories, queryProducts } from "@/lib/products";
+import { categories, queryFrom } from "@/lib/products";
+import { getCatalog } from "@/lib/catalog";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const limitParam = Number(searchParams.get("limit"));
+  const catalog = await getCatalog();
 
-  const result = queryProducts({
+  const result = queryFrom(catalog, {
     category: searchParams.get("category"),
     q: searchParams.get("q"),
     sort: searchParams.get("sort"),

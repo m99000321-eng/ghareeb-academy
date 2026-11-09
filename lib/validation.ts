@@ -1,4 +1,11 @@
 import { z } from "zod";
+import type { PaymentMethodId } from "./commerce-types";
+import { PAYMENT_METHODS } from "./payments";
+
+const paymentIds = PAYMENT_METHODS.map((method) => method.id) as [
+  PaymentMethodId,
+  ...PaymentMethodId[],
+];
 
 export const orderSchema = z.object({
   customer: z.object({
@@ -12,8 +19,9 @@ export const orderSchema = z.object({
     city: z.string().trim().min(2, "أدخل المدينة").max(60),
     address: z.string().trim().min(8, "أدخل عنوانًا أوضح").max(240),
     notes: z.string().trim().max(400).optional().default(""),
+    email: z.string().trim().max(120).optional().default(""),
   }),
-  payment: z.enum(["cod", "card"]),
+  payment: z.enum(paymentIds),
   items: z
     .array(
       z.object({

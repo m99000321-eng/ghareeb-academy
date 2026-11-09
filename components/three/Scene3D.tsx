@@ -3,6 +3,7 @@
 import { Suspense, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import {
+  ContactShadows,
   Environment,
   Float,
   Lightformer,
@@ -145,46 +146,69 @@ export default function Scene3D({
         </div>
       }
     >
-      <ambientLight intensity={0.4} />
-      <directionalLight position={[4, 7, 5]} intensity={2.4} color="#ffffff" />
-      <directionalLight position={[-5, 3, -4]} intensity={1.1} color="#8b5cf6" />
-      <pointLight position={[-4, 2, -3]} intensity={34} color="#8b5cf6" distance={24} />
-      <pointLight position={[4, -2, 3]} intensity={22} color="#c8ff2e" distance={20} />
+      <ambientLight intensity={isHero ? 0.38 : 0.4} />
+      <directionalLight
+        position={[4.5, 7, 5]}
+        intensity={isHero ? 2.5 : 2.0}
+        color="#ffffff"
+      />
+      <directionalLight
+        position={[-5, 3.5, 2]}
+        intensity={isHero ? 1.15 : 0.75}
+        color={isHero ? "#8b5cf6" : "#dfe6ff"}
+      />
+      <directionalLight position={[0, 2, -6]} intensity={isHero ? 0.9 : 0.9} color="#f6e6c8" />
+      <pointLight
+        position={[-4, 2, -3]}
+        intensity={isHero ? 30 : 8}
+        color={isHero ? "#8b5cf6" : "#cdd7f0"}
+        distance={24}
+      />
+      <pointLight
+        position={[4, -2, 3]}
+        intensity={isHero ? 18 : 6}
+        color={isHero ? "#c8ff2e" : "#ffe7bd"}
+        distance={20}
+      />
 
       <Suspense fallback={null}>
-        <Environment resolution={128}>
-          <Lightformer
-            form="rect"
-            intensity={2.4}
-            color="#ffffff"
-            scale={[7, 7, 1]}
-            position={[0, 5, -6]}
-          />
-          <Lightformer
-            form="rect"
-            intensity={2.2}
-            color="#8b5cf6"
-            scale={[6, 6, 1]}
-            position={[-6, 0, 2]}
-            rotation={[0, Math.PI / 2, 0]}
-          />
-          <Lightformer
-            form="rect"
-            intensity={1.8}
-            color="#c8ff2e"
-            scale={[5, 5, 1]}
-            position={[6, -1, 2]}
-            rotation={[0, -Math.PI / 2, 0]}
-          />
-          <Lightformer
-            form="circle"
-            intensity={1.4}
-            color="#22d3ee"
-            scale={[3, 3, 1]}
-            position={[0, -4, 1]}
-            rotation={[Math.PI / 2, 0, 0]}
-          />
-        </Environment>
+        {isHero ? (
+          <Environment resolution={160}>
+            <Lightformer
+              form="rect"
+              intensity={2.4}
+              color="#ffffff"
+              scale={[8, 8, 1]}
+              position={[0, 5, -6]}
+            />
+            <Lightformer
+              form="rect"
+              intensity={2.2}
+              color="#8b5cf6"
+              scale={[6, 6, 1]}
+              position={[-6, 0, 2]}
+              rotation={[0, Math.PI / 2, 0]}
+            />
+            <Lightformer
+              form="rect"
+              intensity={1.8}
+              color="#c8ff2e"
+              scale={[5, 5, 1]}
+              position={[6, -1, 2]}
+              rotation={[0, -Math.PI / 2, 0]}
+            />
+            <Lightformer
+              form="circle"
+              intensity={1.4}
+              color="#22d3ee"
+              scale={[3, 3, 1]}
+              position={[0, -4, 1]}
+              rotation={[Math.PI / 2, 0, 0]}
+            />
+          </Environment>
+        ) : (
+          <Environment files="/hdri/studio.hdr" environmentIntensity={0.85} resolution={256} />
+        )}
 
         {isHero ? (
           <>
@@ -253,15 +277,27 @@ export default function Scene3D({
         ) : null}
 
         {!isHero ? (
+          <ContactShadows
+            position={[0, isConfig ? -1.88 : -2.02, 0]}
+            opacity={isConfig ? 0.55 : 0.42}
+            scale={9}
+            blur={2.6}
+            far={4.4}
+            resolution={512}
+            color="#000000"
+          />
+        ) : null}
+
+        {!isHero ? (
           <EffectComposer multisampling={0}>
             <Bloom
-              intensity={0.55}
-              luminanceThreshold={0.32}
-              luminanceSmoothing={0.22}
+              intensity={0.24}
+              luminanceThreshold={0.74}
+              luminanceSmoothing={0.2}
               mipmapBlur
-              radius={0.72}
+              radius={0.55}
             />
-            <Vignette offset={0.32} darkness={0.5} />
+            <Vignette offset={0.34} darkness={0.42} />
           </EffectComposer>
         ) : null}
       </Suspense>

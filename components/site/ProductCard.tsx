@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Check, Plus, Star } from "lucide-react";
 import { categoryMap, formatPrice, type Product } from "@/lib/products";
@@ -41,27 +42,42 @@ export function ProductCard({
             />
             <div className="bg-grid absolute inset-0 opacity-25" />
 
-            <div className="absolute left-1/2 top-1/2 h-[60%] w-[60%] -translate-x-1/2 -translate-y-1/2">
-              <div
-                className="absolute inset-0 rounded-full opacity-50 blur-3xl transition-opacity duration-700 group-hover:opacity-80"
-                style={{ background: category.color }}
-              />
-              <div
-                className="absolute inset-[6%] rounded-full transition-transform duration-700 group-hover:scale-105"
-                style={{
-                  background: `radial-gradient(circle at 32% 26%, #ffffff 0%, ${category.color} 34%, #080812 82%)`,
-                  boxShadow: `inset -20px -26px 60px rgba(0,0,0,0.7), 0 0 70px ${category.colorSoft}`,
-                }}
-              />
-              <span className="absolute inset-0 rounded-full border border-white/15" />
-              <span className="absolute -inset-3 rounded-full border border-dashed border-white/12 animate-spin-slow" />
-            </div>
+            {product.image ? (
+              <>
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  fill
+                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/5 to-transparent" />
+              </>
+            ) : (
+              <>
+                <div className="absolute left-1/2 top-1/2 h-[60%] w-[60%] -translate-x-1/2 -translate-y-1/2">
+                  <div
+                    className="absolute inset-0 rounded-full opacity-50 blur-3xl transition-opacity duration-700 group-hover:opacity-80"
+                    style={{ background: category.color }}
+                  />
+                  <div
+                    className="absolute inset-[6%] rounded-full transition-transform duration-700 group-hover:scale-105"
+                    style={{
+                      background: `radial-gradient(circle at 32% 26%, #ffffff 0%, ${category.color} 34%, #080812 82%)`,
+                      boxShadow: `inset -20px -26px 60px rgba(0,0,0,0.7), 0 0 70px ${category.colorSoft}`,
+                    }}
+                  />
+                  <span className="absolute inset-0 rounded-full border border-white/15" />
+                  <span className="absolute -inset-3 rounded-full border border-dashed border-white/12 animate-spin-slow" />
+                </div>
 
-            <Icon
-              size={72}
-              strokeWidth={1}
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white/90 drop-shadow-[0_4px_20px_rgba(0,0,0,0.6)]"
-            />
+                <Icon
+                  size={72}
+                  strokeWidth={1}
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white/90 drop-shadow-[0_4px_20px_rgba(0,0,0,0.6)]"
+                />
+              </>
+            )}
 
             {product.badge ? (
               <span className="absolute right-4 top-4 rounded-full border border-white/15 bg-ink/60 px-3 py-1 text-[10px] font-bold text-white/85 backdrop-blur-md">

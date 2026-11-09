@@ -12,12 +12,10 @@ import {
   Truck,
 } from "lucide-react";
 import {
-  FREE_SHIPPING_THRESHOLD,
-  SHIPPING_FEE,
   categoryMap,
   formatPrice,
-  productMap,
 } from "@/lib/products";
+import { useCatalog, useStoreSettings } from "@/lib/useCatalog";
 import { useCart } from "@/lib/store";
 import { categoryIcons } from "@/components/site/categoryIcons";
 
@@ -25,6 +23,8 @@ export default function CartPage() {
   const items = useCart((state) => state.items);
   const setQty = useCart((state) => state.setQty);
   const remove = useCart((state) => state.remove);
+  const catalog = useCatalog();
+  const settings = useStoreSettings();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -32,18 +32,20 @@ export default function CartPage() {
   }, []);
 
   const lines = items
-    .map((line) => ({ line, product: productMap[line.slug] }))
+    .map((line) => ({ line, product: catalog[line.slug] }))
     .filter((entry) => Boolean(entry.product));
 
   const subtotal = lines.reduce(
     (sum, entry) => sum + entry.product.price * entry.line.qty,
     0,
   );
+  const threshold = settings.freeShippingThreshold;
   const shipping =
-    subtotal === 0 || subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+    subtotal === 0 || subtotal >= threshold ? 0 : settings.shippingFee;
   const total = subtotal + shipping;
-  const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
-  const progress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
+  const remaining = Math.max(0, threshold - subtotal);
+  const progress =
+    threshold > 0 ? Math.min(100, (subtotal / threshold) * 100) : 100;
 
   return (
     <div className="relative min-h-[70vh] overflow-hidden pb-20 pt-32">

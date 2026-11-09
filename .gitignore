@@ -9,9 +9,8 @@ npm-debug.log*
 .DS_Store
 *.tsbuildinfo
 next-env.d.ts
-data/orders.json
-data/messages.json
-data/subscribers.json
+data/
+vibe_images/
 
 .shots
 .vercel

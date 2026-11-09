@@ -17,6 +17,9 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { Configurator } from "@/components/site/Configurator";
 import { Reveal } from "@/components/site/Reveal";
 import { featuredProducts } from "@/lib/products";
+import { getCatalog } from "@/lib/catalog";
+
+export const dynamic = "force-dynamic";
 
 const features = [
   {
@@ -72,7 +75,13 @@ const testimonials = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const catalog = await getCatalog();
+  const featured =
+    catalog.filter((product) => product.featured).length > 0
+      ? catalog.filter((product) => product.featured)
+      : featuredProducts;
+
   return (
     <>
       <Hero />
@@ -141,7 +150,7 @@ export default function HomePage() {
           </Reveal>
 
           <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4 lg:gap-x-6">
-            {featuredProducts.map((product, index) => (
+            {featured.map((product, index) => (
               <Reveal key={product.slug} delay={Math.min(index * 0.04, 0.24)}>
                 <ProductCard product={product} />
               </Reveal>

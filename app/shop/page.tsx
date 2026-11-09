@@ -4,11 +4,14 @@ import { ArrowLeft, Search, SlidersHorizontal, Sparkles, X } from "lucide-react"
 import {
   categories,
   categoryMap,
-  queryProducts,
+  queryFrom,
   type SortId,
 } from "@/lib/products";
+import { getCatalog } from "@/lib/catalog";
 import { ProductCard } from "@/components/site/ProductCard";
 import { cn } from "@/lib/utils";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "المتجر — كل معدات القتال",
@@ -59,7 +62,8 @@ export default async function ShopPage({
     ? sortParam
     : "featured";
 
-  const results = queryProducts({
+  const catalog = await getCatalog();
+  const results = queryFrom(catalog, {
     category: activeCategory,
     q: query,
     sort,
@@ -223,11 +227,56 @@ export default async function ShopPage({
         </div>
 
         {results.length > 0 ? (
-          <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-6">
-            {results.map((product) => (
-              <ProductCard key={product.slug} product={product} />
-            ))}
-          </div>
+          activeCategory || query ? (
+            <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-6">
+              {results.map((product) => (
+                <ProductCard key={product.slug} product={product} />
+              ))}
+            </div>
+          ) : (
+            <div className="mt-10 space-y-16">
+              {categories.map((category) => {
+                const items = results.filter(
+                  (product) => product.category === category.id,
+                );
+                if (items.length === 0) return null;
+                return (
+                  <section key={category.id} id={category.id}>
+                    <div className="flex flex-wrap items-end justify-between gap-3 border-b border-white/10 pb-4">
+                      <div className="flex items-center gap-3">
+                        <span className="font-display text-xs font-black text-white/25">
+                          {category.index}
+                        </span>
+                        <div>
+                          <h2 className="font-display text-2xl font-black">
+                            أدوات{" "}
+                            <span style={{ color: category.color }}>
+                              {category.name}
+                            </span>
+                          </h2>
+                          <p className="mt-1 text-[11px] text-white/35">
+                            {category.tagline} — {items.length} منتجًا
+                          </p>
+                        </div>
+                      </div>
+                      <Link
+                        href={buildHref({ category: category.id, sort })}
+                        className="inline-flex items-center gap-1.5 text-[11px] font-bold text-white/45 transition-colors hover:text-acid"
+                      >
+                        كل {category.name}
+                        <ArrowLeft size={13} />
+                      </Link>
+                    </div>
+                    <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-6">
+                      {items.map((product) => (
+                        <ProductCard key={product.slug} product={product} />
+                      ))}
+                    </div>
+                  </section>
+                );
+              })}
+            </div>
+          )
         ) : (
           <div className="mt-10 grid place-items-center rounded-3xl border border-dashed border-white/15 py-20 text-center">
             <Sparkles size={28} className="text-acid/60" />

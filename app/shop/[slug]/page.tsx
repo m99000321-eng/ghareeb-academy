@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import {
@@ -14,9 +15,8 @@ import {
   formatPrice,
   getProduct,
   getProductModel,
-  getRelated,
-  products,
 } from "@/lib/products";
+import { getCatalog, relatedFrom } from "@/lib/catalog";
 import { Scene3DClient } from "@/components/three/Scene3DClient";
 import { AddToCart } from "@/components/site/AddToCart";
 import { ProductCard } from "@/components/site/ProductCard";
@@ -25,9 +25,7 @@ type ProductPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return products.map((product) => ({ slug: product.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -54,14 +52,15 @@ const guarantees = [
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const catalog = await getCatalog();
+  const product = catalog.find((item) => item.slug === slug);
 
   if (!product) {
     notFound();
   }
 
   const category = categoryMap[product.category];
-  const related = getRelated(product);
+  const related = relatedFrom(catalog, product);
   const discount = product.oldPrice
     ? Math.round((1 - product.price / product.oldPrice) * 100)
     : 0;
@@ -72,6 +71,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
     name: product.name,
     description: product.description,
     sku: product.sku,
+    image: product.image
+      ? `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://ghareeb-academy.vercel.app"}${product.image}`
+      : undefined,
     brand: { "@type": "Brand", name: "الغريب | GHAREEB" },
     aggregateRating: {
       "@type": "AggregateRating",
@@ -132,26 +134,44 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-ink-2/60">
               <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-5 py-4 text-[10px] font-semibold tracking-[0.2em] text-white/40">
                 <span>{product.sku}</span>
-                <span className="flex items-center gap-1.5">
-                  <Move3d size={13} />
-                  اسحب للدوران
-                </span>
+                {product.image ? (
+                  <span>صورة المنتج</span>
+                ) : (
+                  <span className="flex items-center gap-1.5">
+                    <Move3d size={13} />
+                    اسحب للدوران
+                  </span>
+                )}
               </div>
 
-              <div className="h-[420px] sm:h-[540px]">
-                <Scene3DClient
-                  variant="product"
-                  model={getProductModel(product.slug)}
-                  color={product.modelColor}
-                  accent={product.modelAccent}
-                  metalness={product.category === "kungfu" ? 0.3 : 0.2}
-                  roughness={product.category === "kungfu" ? 0.3 : 0.38}
-                />
-              </div>
+              {product.image ? (
+                <div className="relative h-[420px] sm:h-[540px]">
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink-2/70 via-transparent to-ink-2/20" />
+                </div>
+              ) : (
+                <div className="h-[420px] sm:h-[540px]">
+                  <Scene3DClient
+                    variant="product"
+                    model={getProductModel(product.slug)}
+                    color={product.modelColor}
+                    accent={product.modelAccent}
+                    metalness={product.category === "kungfu" ? 0.3 : 0.2}
+                    roughness={product.category === "kungfu" ? 0.3 : 0.38}
+                  />
+                </div>
+              )}
 
               <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink-2 to-transparent" />
               <div className="absolute bottom-5 left-5 rounded-full border border-white/10 bg-ink/70 px-4 py-2 text-[10px] text-white/55 backdrop-blur">
-                معاينة ثلاثية الأبعاد تفاعلية
+                {product.image ? "صورة استوديو عالية الدقة" : "معاينة ثلاثية الأبعاد تفاعلية"}
               </div>
             </div>
 
